@@ -2,7 +2,19 @@
 #include <ctype.h>
 #include <string.h>
 
+#ifndef DEFAULT_FONT_NAME
 #define DEFAULT_FONT_NAME "standard"
+#endif
+
+#ifndef FONT_DIRECTORIES
+#define FONT_DIRECTORIES
+char *font_dirs[] = {
+	"/usr/share/figlet/",
+	"/usr/share/figlet/fonts/",
+	"figlet-fonts"
+};
+#endif
+
 
 char *font_name = DEFAULT_FONT_NAME;
 
