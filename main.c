@@ -59,6 +59,9 @@ bool hanle_args(int argc, char **argv) {
 				lower(font_name);
 				i += 2;
 				break;
+			default:
+				printf("Unknown command: %s\n", current_arg);
+				return false;
 		}
 	}
 	
