@@ -28,10 +28,21 @@ int lower(char *input) {
 	return i + 1;
 }
 
+
 bool hanle_args(int argc, char **argv) {
 	for (int i = 1; i < argc; i++) {
 		char *current_arg = argv[i];
 		int arg_length = lower(current_arg);
+
+		if (strcmp(current_arg, "--list") == 0) {
+			printf("List of all fonts\n");
+			continue;
+		}
+		else if (strcmp(current_arg, "--help") == 0) {
+			printf("Help\n");
+			continue;
+		}
+
 		if (current_arg[0] != '-' || arg_length != 3) {
 			printf("Unexpected argument: %s\n", current_arg);
 			return false;
