@@ -30,7 +30,7 @@ int lower(char *input) {
 	return i + 1;
 }
 
-bool compareCaseInsensitive(char *s1, char *s2) {
+bool compare_case_insensitive(char *s1, char *s2) {
 	// WARNING: compares only to the length of the shorter string, so strings with different lengths can result in return true
 	for (size_t i = 0; s1[i] != '\0' && s2[i] != '\0'; i++) {
 		if (tolower(s1[i]) != tolower(s2[i])) return false;
@@ -97,7 +97,7 @@ char *find_font_file(char *font_name, char **font_dirs, size_t font_dir_count) {
 			
 			if (file_name_length < 4 || strcmp(&file_name[file_name_length-4], ".flf") != 0) continue;
 
-			if (compareCaseInsensitive(font_name, file_name)) {
+			if (compare_case_insensitive(font_name, file_name)) {
 				char *result = malloc((current_dir_name_length + file_name_length) * sizeof(char));
 				if (result == NULL) {
 					printf("Not enough memory.");
