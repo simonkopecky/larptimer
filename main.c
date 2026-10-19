@@ -30,6 +30,14 @@ int lower(char *input) {
 	return i + 1;
 }
 
+bool compareCaseInsensitive(char *s1, char *s2) {
+	// WARNING: compares only to the length of the shorter string, so strings with different lengths can result in return true
+	for (size_t i = 0; s1[i] != '\0' && s2[i] != '\0'; i++) {
+		if (tolower(s1[i]) != tolower(s2[i])) return false;
+	}
+
+	return true;
+}
 
 bool hanle_args(int argc, char **argv) {
 	for (int i = 1; i < argc; i++) {
