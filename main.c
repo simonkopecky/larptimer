@@ -78,11 +78,54 @@ bool hanle_args(int argc, char **argv) {
 	return true;
 }
 
+char *find_font_file(char *font_name, char **font_dirs, size_t font_dir_count) {
+
+	for (size_t i = 0; i < font_dir_count; i++) {
+		char *current_dir_name = font_dirs[i];
+		size_t current_dir_name_length = strlen(current_dir_name);
+		DIR *current_dir = opendir(current_dir_name);
+		struct dirent *file;
+
+		if (current_dir == NULL) {
+			//printf("Couldn't open folder %s. Skipping...\n", current_dir_name);
+			continue;
+		}
+
+		while ((file = readdir(current_dir)) != NULL) {
+			char *file_name = file->d_name;
+			size_t file_name_length = strlen(file_name);
+			
+			if (file_name_length < 4 || strcmp(&file_name[file_name_length-4], ".flf") != 0) continue;
+
+			if (compareCaseInsensitive(font_name, file_name)) {
+				char *result = malloc((current_dir_name_length + file_name_length) * sizeof(char));
+				if (result == NULL) {
+					printf("Not enough memory.");
+					return NULL;
+				}
+				strcpy(result, current_dir_name);
+				strcat(result, file_name);
+				return result;
+			}
+		}
+	}
+
+	return NULL;
+}
+
 int main(int argc, char **argv) {
 	
 	if (!hanle_args(argc, argv)) return 1;
 
-	printf("%s\n", font_name);
+	size_t font_dir_count = sizeof(font_dirs) / sizeof(font_dirs[0]);
+	char *font_file_path = find_font_file(font_name, font_dirs, font_dir_count);
+	if (font_file_path == NULL) {
+		printf("Couldn't find font with name %s\n", font_name);
+		return 1;
+	}
+
+	printf("%s\n", font_file_path);
+
 
 	return 0;
 }
