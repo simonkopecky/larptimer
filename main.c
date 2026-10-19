@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
 
 #ifndef DEFAULT_FONT_NAME
 #define DEFAULT_FONT_NAME "standard"
