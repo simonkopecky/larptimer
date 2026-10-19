@@ -13,7 +13,7 @@
 char *font_dirs[] = {
 	"/usr/share/figlet/",
 	"/usr/share/figlet/fonts/",
-	"figlet-fonts"
+	"figlet-fonts/"
 };
 #endif
 
