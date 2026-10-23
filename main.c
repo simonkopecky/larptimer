@@ -163,18 +163,16 @@ int get_char_start_index(char target_char, char *file_buffer, int height, int co
 	return -1;
 }
 
-char *get_big_char(char *file_buffer, int index, int height) {
-	int width = 0; // +1 for the new line character
-	
-	printf("%d\n", index);
+char *get_big_char(char *file_buffer, int index, int height, int *width) {
+	*width = 0; // +1 for the new line character
 
-	for (int i = index; file_buffer[i] != '\n' && file_buffer[i] != '\r'; i++) width += 1;
+	for (int i = index; file_buffer[i] != '\n' && file_buffer[i] != '\r'; i++) *width += 1;
 
-	if (width <= 1) {
+	if (*width <= 1) {
 		return NULL;
 	}
 
-	int result_char_length = width * height + 1; // +1 for \0
+	int result_char_length = *width * height + 1; // +1 for \0
 
 	char* result_char = malloc(result_char_length);
 
