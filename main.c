@@ -260,8 +260,29 @@ Big_Char *get_font_from_file(char *char_list, char *font_file_path) {
 	return font_chars;
 }
 
-void print_big_chars(char *text, char** font) {
+void print_big_chars(char *text, Big_Char *font) {
+	if (*text == '\0') return;
 
+	char first_char = font[0].character;
+	int height = font[0].height;
+	int line_index = 0;
+
+
+	for (int i = 0; ; i++) {
+		if (line_index == height) return;
+
+		if (text[i] == '\0') {
+			line_index++;
+			i = -1;
+			printf("\n");
+			continue;
+		}
+
+		Big_Char current_big_char = font[text[i] - first_char];
+		//printf("%c", current_big_char.character);
+
+		print_big_char_line(current_big_char.data + line_index * current_big_char.width);
+	}
 }
 
 int main(int argc, char **argv) {
