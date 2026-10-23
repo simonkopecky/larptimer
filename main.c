@@ -22,14 +22,24 @@ char *font_dirs[] = {
 
 char *font_name = DEFAULT_FONT_NAME;
 
-int lower(char *input) {
+char* tolower_string(char *input) {
 	int i = 0;
+	size_t input_length = strlen(input) + 1;
+
+	if (input_length == 0) return NULL;
+
+	char* result = malloc(input_length);
+
+	if (result == NULL) return NULL;
+
 	while (input[i] != '\0') {
-		input[i] = tolower(input[i]);
+		result[i] = tolower(input[i]);
 		i++;
 	}
 
-	return i + 1;
+	result[input_length - 1] = '\0';
+
+	return result;
 }
 
 bool compare_case_insensitive(char *s1, char *s2) {
