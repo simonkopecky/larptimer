@@ -65,18 +65,18 @@ bool compare_case_insensitive(char *s1, char *s2) {
 bool hanle_args(int argc, char **argv) {
 	for (int i = 1; i < argc; i++) {
 		char *current_arg = argv[i];
-		int arg_length = lower(current_arg);
+		int arg_length = strlen(current_arg);
 
 		if (strcmp(current_arg, "--list") == 0) {
 			printf("List of all fonts\n");
-			continue;
+			break;
 		}
 		else if (strcmp(current_arg, "--help") == 0) {
 			printf("Help\n");
-			continue;
+			break;
 		}
 
-		if (current_arg[0] != '-' || arg_length != 3) {
+		if (current_arg[0] != '-' || arg_length != 2) {
 			printf("Unexpected argument: %s\n", current_arg);
 			return false;
 		}
@@ -89,7 +89,6 @@ bool hanle_args(int argc, char **argv) {
 				}
 
 				font_name = argv[i + 1];
-				lower(font_name);
 				i += 2;
 				break;
 			default:
