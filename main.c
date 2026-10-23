@@ -243,8 +243,11 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	printf("%s\n", font_file_path);
+	char *test_time = "69:69";
 
+	char **font = get_font_from_file("0123456789:", font_file_path);
+
+	print_big_chars(test_time, font);
 
 	return 0;
 }
