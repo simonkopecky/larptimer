@@ -22,6 +22,13 @@ char *font_dirs[] = {
 
 char *font_name = DEFAULT_FONT_NAME;
 
+typedef struct {
+	char *data;
+	char character;
+	int height;
+	int width;
+} Big_Char;
+
 char* tolower_string(char *input) {
 	int i = 0;
 	size_t input_length = strlen(input) + 1;
