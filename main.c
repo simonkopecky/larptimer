@@ -134,6 +134,41 @@ int get_char_start_index(char target_char, char *file_buffer, int height, int co
 	return -1;
 }
 
+char *get_big_char(char *file_buffer, int index, int height) {
+	int width = 0; // +1 for the new line character
+	
+	printf("%d\n", index);
+
+	for (int i = index; file_buffer[i] != '\n' && file_buffer[i] != '\r'; i++) width += 1;
+
+	if (width <= 1) {
+		return NULL;
+	}
+
+	int result_char_length = width * height + 1; // +1 for \0
+
+	char* result_char = malloc(result_char_length);
+
+	int result_char_index = 0;
+
+	for (int i = index; result_char_index < result_char_length - 1; i++) {
+		if (file_buffer[i] == '\0') return NULL;
+
+		if (file_buffer[i + 1] == '\n' || file_buffer[i + 1] == '\r') {
+			continue;
+		}
+		else {
+			result_char[result_char_index] = file_buffer[i];
+		}
+
+		result_char_index += 1;
+	}
+
+	result_char[result_char_length - 1] = '\0';
+	result_char[result_char_length - 2] = '\n';
+
+	return result_char;
+}
 int main(int argc, char **argv) {
 	
 	if (!hanle_args(argc, argv)) return 1;
