@@ -227,6 +227,11 @@ char **get_font_from_file(char *char_list, char *font_file_path) {
 
 	return font_chars;
 }
+
+void print_big_chars(char *text, char** font) {
+
+}
+
 int main(int argc, char **argv) {
 	
 	if (!hanle_args(argc, argv)) return 1;
