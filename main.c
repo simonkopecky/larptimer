@@ -300,11 +300,15 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	char *test_time = "69:69";
+	//printf("font_file_path: %s\n", font_file_path);
 
-	char **font = get_font_from_file("0123456789:", font_file_path);
+	char *test_time = "69:69";
+	char *char_set = "0123456789:";
+
+	Big_Char *font = get_font_from_file(char_set, font_file_path);
 
 	print_big_chars(test_time, font);
+	//printf("%s", font[1].data);
 
 	return 0;
 }
