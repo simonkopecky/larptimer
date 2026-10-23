@@ -217,11 +217,11 @@ char *file_to_string(char* path) {
 	return file_buffer;
 }
 
-char **get_font_from_file(char *char_list, char *font_file_path) {
+Big_Char *get_font_from_file(char *char_list, char *font_file_path) {
 	char* file_buffer = file_to_string(font_file_path);
 
 	if (file_buffer == NULL) {
-		printf("Couldn't open font file: %s\n.", font_file_path);
+		printf("Couldn't open font file: %s.\n", font_file_path);
 		return NULL;
 	}
 
@@ -234,19 +234,24 @@ char **get_font_from_file(char *char_list, char *font_file_path) {
 		return NULL;
 	}
 
-	int font_chars_length = (strlen(char_list) - 1) + 1;
-	char **font_chars = malloc(font_chars_length * sizeof(char*));
-	char **current_font_char = font_chars;
-
-	font_chars[font_chars_length - 1] = NULL;
+	int font_chars_length = strlen(char_list);
+	Big_Char *font_chars = malloc(font_chars_length * sizeof(Big_Char));
+	Big_Char *current_font_char = font_chars;
 	
 	for (char *current_char = char_list; *current_char != '\0'; current_char++) {
 		int start_index = get_char_start_index(*current_char, file_buffer, height, comment_lines);
 
-		*current_font_char = get_big_char(file_buffer, start_index, height);
+		int width = 0;
+		char *data = get_big_char(file_buffer, start_index, height, &width);
 
-		if (*current_font_char == NULL) {
-			printf("Font %s doesn't contain character for: %c\n", font_file_path, *current_char);
+		current_font_char->data = data;
+		current_font_char->character = *current_char;
+		current_font_char->height = height;
+		current_font_char->width = width;
+
+		if (data == NULL) {
+			//printf("Font %s doesn't contain character for: %c\n", font_file_path, *current_char);
+			printf("\"%s\" ", font_file_path);
 			return NULL;
 		}
 		current_font_char += 1;
