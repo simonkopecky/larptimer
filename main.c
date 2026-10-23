@@ -189,6 +189,44 @@ char *file_to_string(char* path) {
 
 	return file_buffer;
 }
+
+char **get_font_from_file(char *char_list, char *font_file_path) {
+	char* file_buffer = file_to_string(font_file_path);
+
+	if (file_buffer == NULL) {
+		printf("Couldn't open font file: %s\n.", font_file_path);
+		return NULL;
+	}
+
+	char hardblank;
+	int height, baseline, max_length, smushmode, comment_lines;
+
+	if (6 != sscanf(file_buffer, "flf2a%c %d %d %d %d %d",
+		&hardblank, &height, &baseline, &max_length, &smushmode, &comment_lines)) {
+		printf("Couldn't read header line from file %s\n", font_file_path);
+		return NULL;
+	}
+
+	int font_chars_length = (strlen(char_list) - 1) + 1;
+	char **font_chars = malloc(font_chars_length * sizeof(char*));
+	char **current_font_char = font_chars;
+
+	font_chars[font_chars_length - 1] = NULL;
+	
+	for (char *current_char = char_list; *current_char != '\0'; current_char++) {
+		int start_index = get_char_start_index(*current_char, file_buffer, height, comment_lines);
+
+		*current_font_char = get_big_char(file_buffer, start_index, height);
+
+		if (*current_font_char == NULL) {
+			printf("Font %s doesn't contain character for: %c\n", font_file_path, *current_char);
+			return NULL;
+		}
+		current_font_char += 1;
+	}
+
+	return font_chars;
+}
 int main(int argc, char **argv) {
 	
 	if (!hanle_args(argc, argv)) return 1;
