@@ -17,6 +17,8 @@ char *font_dirs[] = {
 };
 #endif
 
+#define FIRST_CHAR_ASCII 32
+
 
 char *font_name = DEFAULT_FONT_NAME;
 
