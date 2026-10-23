@@ -169,6 +169,26 @@ char *get_big_char(char *file_buffer, int index, int height) {
 
 	return result_char;
 }
+
+char *file_to_string(char* path) {
+	FILE *file;
+	int file_size;
+
+	file = fopen(path, "r");
+	if (file == NULL) return NULL;
+
+	fseek(file, 0L, SEEK_END);
+	file_size = ftell(file);
+	rewind(file);
+
+	char *file_buffer = calloc(1, file_size + 1);
+
+	fread(file_buffer, sizeof(char), file_size, file);
+	file_buffer[file_size] = '\0';
+	fclose(file);
+
+	return file_buffer;
+}
 int main(int argc, char **argv) {
 	
 	if (!hanle_args(argc, argv)) return 1;
