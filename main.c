@@ -101,6 +101,9 @@ bool hanle_args(int argc, char **argv) {
 }
 
 char *find_font_file(char *font_name, char **font_dirs, size_t font_dir_count) {
+	char *lower_case_name = tolower_string(font_name);
+
+	if (lower_case_name == NULL) return NULL;
 
 	for (size_t i = 0; i < font_dir_count; i++) {
 		char *current_dir_name = font_dirs[i];
@@ -116,19 +119,25 @@ char *find_font_file(char *font_name, char **font_dirs, size_t font_dir_count) {
 		while ((file = readdir(current_dir)) != NULL) {
 			char *file_name = file->d_name;
 			size_t file_name_length = strlen(file_name);
+			char *lower_case_file_name = tolower_string(file_name);
 			
 			if (file_name_length < 4 || strcmp(&file_name[file_name_length-4], ".flf") != 0) continue;
 
-			if (compare_case_insensitive(font_name, file_name)) {
-				char *result = malloc((current_dir_name_length + file_name_length) * sizeof(char));
+			lower_case_file_name[file_name_length-4] = '\0';
+
+			if (strcmp(lower_case_name, lower_case_file_name) == 0) {
+				size_t result_length = current_dir_name_length + file_name_length + 1;
+				char *result = malloc(result_length);
 				if (result == NULL) {
 					printf("Not enough memory.");
 					return NULL;
 				}
 				strcpy(result, current_dir_name);
 				strcat(result, file_name);
+				result[result_length - 1] = '\0';
 				return result;
 			}
+
 		}
 	}
 
