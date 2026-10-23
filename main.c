@@ -115,6 +115,25 @@ char *find_font_file(char *font_name, char **font_dirs, size_t font_dir_count) {
 	return NULL;
 }
 
+int get_char_start_index(char target_char, char *file_buffer, int height, int comment_lines) {
+	int line_index = 0;
+	int start_line_index = + height * ((int)target_char - FIRST_CHAR_ASCII) + comment_lines + 1; // +1 for header
+
+	for (int i = 0; file_buffer[i] != '\0'; i++) {
+		char current_file_char = file_buffer[i];
+
+		if (current_file_char != '\n') continue;
+
+		line_index += 1;
+
+		if (line_index == start_line_index) {
+			return i + 1;
+		}
+	}
+
+	return -1;
+}
+
 int main(int argc, char **argv) {
 	
 	if (!hanle_args(argc, argv)) return 1;
