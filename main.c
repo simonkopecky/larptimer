@@ -50,10 +50,14 @@ char* tolower_string(char *input) {
 }
 
 bool compare_case_insensitive(char *s1, char *s2) {
-	// WARNING: compares only to the length of the shorter string, so strings with different lengths can result in return true
-	for (size_t i = 0; s1[i] != '\0' && s2[i] != '\0'; i++) {
+	int i = 0;
+	while (s1[i] != '\0' && s2[i] != '\0') {
 		if (tolower(s1[i]) != tolower(s2[i])) return false;
+
+		i++;
 	}
+
+	if ((s1[i] != '\0') != (s2[i] != '\0')) return false;
 
 	return true;
 }
