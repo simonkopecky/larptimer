@@ -260,6 +260,10 @@ Big_Char *get_font_from_file(char *char_list, char *font_file_path) {
 	return font_chars;
 }
 
+void print_big_char_line(char *big_char) {
+	for (int i = 0; big_char[i] != '\n'; i++) printf("%c", big_char[i]);
+}
+
 void print_big_chars(char *text, Big_Char *font) {
 	if (*text == '\0') return;
 
