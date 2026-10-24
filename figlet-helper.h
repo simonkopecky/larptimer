@@ -62,43 +62,6 @@ bool compare_case_insensitive(char *s1, char *s2) {
 	return true;
 }
 
-bool hanle_args(int argc, char **argv) {
-	for (int i = 1; i < argc; i++) {
-		char *current_arg = argv[i];
-		int arg_length = strlen(current_arg);
-
-		if (strcmp(current_arg, "--list") == 0) {
-			printf("List of all fonts\n");
-			break;
-		}
-		else if (strcmp(current_arg, "--help") == 0) {
-			printf("Help\n");
-			break;
-		}
-
-		if (current_arg[0] != '-' || arg_length != 2) {
-			printf("Unexpected argument: %s\n", current_arg);
-			return false;
-		}
-
-		switch (current_arg[1]) {
-			case 'f':
-				if (i == argc - 1 || argv[i + 1][0] == '-') {
-					printf("Bad usage: -f expects a font name.\n");
-					return false;
-				}
-
-				font_name = argv[i + 1];
-				i += 2;
-				break;
-			default:
-				printf("Unknown command: %s\n", current_arg);
-				return false;
-		}
-	}
-	
-	return true;
-}
 
 char *find_font_file(char *font_name, char **font_dirs, size_t font_dir_count) {
 	char *lower_case_name = tolower_string(font_name);
@@ -164,7 +127,7 @@ int get_char_start_index(char target_char, char *file_buffer, int height, int co
 }
 
 char *get_big_char(char *file_buffer, int index, int height, int *width) {
-	*width = 0; // +1 for the new line character
+	*width = 0;
 
 	for (int i = index; file_buffer[i] != '\n' && file_buffer[i] != '\r'; i++) *width += 1;
 
@@ -260,32 +223,134 @@ Big_Char *get_font_from_file(char *char_list, char *font_file_path) {
 	return font_chars;
 }
 
-void print_big_char_line(char *big_char) {
-	for (int i = 0; big_char[i] != '\n'; i++) printf("%c", big_char[i]);
+void add_spaces(Big_Char *bc, int left, int right) {
+	int result_width = bc->width + left + right;
+	int result_size = result_width * bc->height;
+	char *result = malloc(result_size + 1);
+	
+	char *data = bc->data;
+	for (int line = 0; line < bc->height; line++) {
+		int ch = 0;
+		for (; ch < result_width - 1; ch++) {
+			if (ch < left) {
+				result[ch + line * result_width] = ' ';
+			}
+			else if (ch < left + bc->width - 1) {
+				result[ch + line * result_width] = data[ch - left + line * bc->width];
+			}
+			else {
+				result[ch + line * result_width] = ' ';
+			}
+
+		}
+
+		result[ch + line * result_width] = '\n';
+	}
+
+	result[result_size] = '\0';
+
+	bc->data = result;
 }
 
-void print_big_chars(char *text, Big_Char *font) {
-	if (*text == '\0') return;
+void monospace(Big_Char *font, int font_size) {
+	int max_width = 0;
+	for (int i = 0; i < font_size; i++) {
+		if (font[i].width > max_width) max_width = font[i].width;
+	}
+
+	for (int i = 0; i < font_size; i++) {
+		if (font[i].width == max_width) continue;
+
+		int diff = max_width - font[i].width;
+
+		if (diff % 2 == 0) {
+			add_spaces(font + i, diff / 2, diff / 2);
+		}
+		else {
+			add_spaces(font + i, diff / 2 + 1, diff / 2);
+		}
+
+		font[i].width = max_width;
+
+	}
+}
+
+char *get_big_char_line(char *big_char, int width) {
+	char *result = malloc(width + 1);
+
+	if (result == NULL) return NULL;
+
+	for (int i = 0; big_char[i] != '\n'; i++) result[i] = big_char[i];
+
+	result[width] = '\0';
+
+	return result;
+}
+
+int set_big_char_line(char *dest, char *big_char, int width) {
+	char *result = get_big_char_line(big_char, width);
+
+	if (result == NULL) return -1;
+
+	int i = 0;
+	for (; result[i] != '\0'; i++) {
+		if (i >= width) return -1;
+
+		dest[i] = result[i];
+	}
+
+	return i;
+}
+
+char *cat_big_chars(char *text, Big_Char *font) {
+	if (*text == '\0') return NULL;
 
 	char first_char = font[0].character;
 	int height = font[0].height;
 	int line_index = 0;
 
+	int result_length = 0;
+	for (int i = 0; text[i] != '\0'; i++) {
+		result_length += font[text[i] - first_char].width - 1;
+	}
+
+	result_length *= height;
+	result_length += height;
+
+
+	char *result = malloc(result_length + 1);
+	int current_result_index = 0;
 
 	for (int i = 0; ; i++) {
-		if (line_index == height) return;
+		if (line_index == height) break;
 
 		if (text[i] == '\0') {
 			line_index++;
 			i = -1;
-			printf("\n");
+			result[current_result_index] = '\n';
+			current_result_index += 1;
 			continue;
 		}
 
 		Big_Char current_big_char = font[text[i] - first_char];
-		//printf("%c", current_big_char.character);
 
-		print_big_char_line(current_big_char.data + line_index * current_big_char.width);
+		int added_char_count = set_big_char_line(
+			result + current_result_index,
+			current_big_char.data + line_index * current_big_char.width,
+			current_big_char.width - 1
+		);
+
+
+		if (added_char_count <= 0) {
+			printf("bruh");
+			return NULL;
+		}
+		
+		current_result_index += added_char_count;
 	}
+
+	result[result_length] = '\0';
+
+	return result;
 }
 
