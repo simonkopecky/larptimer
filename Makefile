@@ -1,12 +1,12 @@
 build:
-	gcc -Wall -pedantic -Wextra main.c -o hacktimer
+	gcc -Wall -pedantic -Wextra main.c -o larptimer
 
 test: build
-	./hacktimer
+	./larptimer
 
 test-fonts: build
 	@for file in figlet-fonts/*.flf; do \
 		[ -e "$$file" ] || continue; \
 		font=$$(basename "$$file" .flf); \
-		./hacktimer -f "$$font" || (echo "$$font"; exit 1); \
+		./larptimer -f "$$font" || (echo "$$font"; exit 1); \
 	done
