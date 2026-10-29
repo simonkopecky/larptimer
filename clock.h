@@ -179,7 +179,7 @@ void lt_clock(Figlet_Char *font) {
 
 		char *result = text_to_figlet(buff, font);
 
-		if (!print_for_duration(result, 250)) break;
+		if (!print_for_duration(result, 100)) break;
 	}
 
 	tb_shutdown();
