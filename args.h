@@ -1,14 +1,19 @@
 #include <string.h>
+#include "figlet-helper.h"
 
 char* start_duration_text;
 bool use_as_clock = true;
+
+void help() {
+
+}
 
 bool hanle_args(int argc, char **argv) {
 	for (int i = 1; i < argc; i++) {
 		char *current_arg = argv[i];
 
 		if (strcmp(current_arg, "--list") == 0) {
-			printf("List of all fonts\n");
+			print_fonts(font_dirs, sizeof(font_dirs));
 			return false;
 		}
 		else if (strcmp(current_arg, "--help") == 0) {
@@ -36,8 +41,6 @@ bool hanle_args(int argc, char **argv) {
 				printf("Unknown command: %s\n", current_arg);
 				return false;
 		}
-
-		printf("%s\n", font_name);
 	}
 	
 	return true;

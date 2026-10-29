@@ -62,6 +62,29 @@ bool compare_case_insensitive(char *s1, char *s2) {
 	return true;
 }
 
+void print_fonts(char **font_dirs, size_t font_dir_count) {
+	for (size_t i = 0; i < font_dir_count; i++) {
+		char *current_dir_name = font_dirs[i];
+		DIR *current_dir = opendir(current_dir_name);
+		struct dirent *file;
+
+		if (current_dir == NULL) {
+			continue;
+		}
+
+		while ((file = readdir(current_dir)) != NULL) {
+			char *file_name = file->d_name;
+			size_t file_name_length = strlen(file_name);
+			char *lower_case_file_name = tolower_string(file_name);
+			
+			if (file_name_length < 4 || strcmp(&file_name[file_name_length-4], ".flf") != 0) continue;
+
+			lower_case_file_name[file_name_length-4] = '\0';
+
+			printf("%s\n", lower_case_file_name);
+		}
+	}
+}
 
 char *find_font_file(char *font_name, char **font_dirs, size_t font_dir_count) {
 	char *lower_case_name = tolower_string(font_name);
