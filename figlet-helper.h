@@ -27,7 +27,7 @@ typedef struct {
 	char character;
 	int height;
 	int width;
-} Big_Char;
+} Figlet_Char;
 
 char* tolower_string(char *input) {
 	int i = 0;
@@ -126,7 +126,7 @@ int get_char_start_index(char target_char, char *file_buffer, int height, int co
 	return -1;
 }
 
-char *get_big_char(char *file_buffer, int index, int height, int *width) {
+char *get_figlet_char(char *file_buffer, int index, int height, int *width) {
 	*width = 0;
 
 	for (int i = index; file_buffer[i] != '\n' && file_buffer[i] != '\r'; i++) *width += 1;
@@ -180,7 +180,7 @@ char *file_to_string(char* path) {
 	return file_buffer;
 }
 
-Big_Char *get_font_from_file(char *char_list, char *font_file_path) {
+Figlet_Char *get_font_from_file(char *char_list, char *font_file_path) {
 	char* file_buffer = file_to_string(font_file_path);
 
 	if (file_buffer == NULL) {
@@ -198,14 +198,14 @@ Big_Char *get_font_from_file(char *char_list, char *font_file_path) {
 	}
 
 	int font_chars_length = strlen(char_list);
-	Big_Char *font_chars = malloc(font_chars_length * sizeof(Big_Char));
-	Big_Char *current_font_char = font_chars;
+	Figlet_Char *font_chars = malloc(font_chars_length * sizeof(Figlet_Char));
+	Figlet_Char *current_font_char = font_chars;
 	
 	for (char *current_char = char_list; *current_char != '\0'; current_char++) {
 		int start_index = get_char_start_index(*current_char, file_buffer, height, comment_lines);
 
 		int width = 0;
-		char *data = get_big_char(file_buffer, start_index, height, &width);
+		char *data = get_figlet_char(file_buffer, start_index, height, &width);
 
 		current_font_char->data = data;
 		current_font_char->character = *current_char;
@@ -223,7 +223,7 @@ Big_Char *get_font_from_file(char *char_list, char *font_file_path) {
 	return font_chars;
 }
 
-void add_spaces(Big_Char *bc, int left, int right) {
+void add_spaces(Figlet_Char *bc, int left, int right) {
 	int result_width = bc->width + left + right;
 	int result_size = result_width * bc->height;
 	char *result = malloc(result_size + 1);
@@ -252,7 +252,7 @@ void add_spaces(Big_Char *bc, int left, int right) {
 	bc->data = result;
 }
 
-void monospace(Big_Char *font, int font_size) {
+void monospace(Figlet_Char *font, int font_size) {
 	int max_width = 0;
 	for (int i = 0; i < font_size; i++) {
 		if (font[i].width > max_width) max_width = font[i].width;
@@ -275,20 +275,20 @@ void monospace(Big_Char *font, int font_size) {
 	}
 }
 
-char *get_big_char_line(char *big_char, int width) {
+char *get_figlet_char_line(char *figlet_char, int width) {
 	char *result = malloc(width + 1);
 
 	if (result == NULL) return NULL;
 
-	for (int i = 0; big_char[i] != '\n'; i++) result[i] = big_char[i];
+	for (int i = 0; figlet_char[i] != '\n'; i++) result[i] = figlet_char[i];
 
 	result[width] = '\0';
 
 	return result;
 }
 
-int set_big_char_line(char *dest, char *big_char, int width) {
-	char *result = get_big_char_line(big_char, width);
+int set_figlet_char_line(char *dest, char *figlet_char, int width) {
+	char *result = get_figlet_char_line(figlet_char, width);
 
 	if (result == NULL) return -1;
 
@@ -302,7 +302,7 @@ int set_big_char_line(char *dest, char *big_char, int width) {
 	return i;
 }
 
-char *cat_big_chars(char *text, Big_Char *font) {
+char *text_to_figlet(char *text, Figlet_Char *font) {
 	if (*text == '\0') return NULL;
 
 	char first_char = font[0].character;
@@ -332,12 +332,12 @@ char *cat_big_chars(char *text, Big_Char *font) {
 			continue;
 		}
 
-		Big_Char current_big_char = font[text[i] - first_char];
+		Figlet_Char current_figlet_char = font[text[i] - first_char];
 
-		int added_char_count = set_big_char_line(
+		int added_char_count = set_figlet_char_line(
 			result + current_result_index,
-			current_big_char.data + line_index * current_big_char.width,
-			current_big_char.width - 1
+			current_figlet_char.data + line_index * current_figlet_char.width,
+			current_figlet_char.width - 1
 		);
 
 
