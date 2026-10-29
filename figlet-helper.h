@@ -1,3 +1,5 @@
+#ifndef FIGLET_HELPER
+#define FIGLET_HELPER
 
 #include <ctype.h>
 #include <string.h>
@@ -19,8 +21,10 @@ char *font_dirs[] = {
 
 #define FIRST_CHAR_ASCII 32
 
-
+#ifndef FONT_NAME
+#define FONT_NAME
 char *font_name = DEFAULT_FONT_NAME;
+#endif
 
 typedef struct {
 	char *data;
@@ -149,7 +153,7 @@ int get_char_start_index(char target_char, char *file_buffer, int height, int co
 	return -1;
 }
 
-char *get_figlet_char(char *file_buffer, int index, int height, int *width) {
+char *get_figlet_char(char *file_buffer, int index, int height, int *width, char hardblank) {
 	*width = 0;
 
 	for (int i = index; file_buffer[i] != '\n' && file_buffer[i] != '\r'; i++) *width += 1;
@@ -159,6 +163,8 @@ char *get_figlet_char(char *file_buffer, int index, int height, int *width) {
 	}
 
 	int result_char_length = *width * height + 1; // +1 for \0
+
+	printf("w: %d, h: %d = %d\n", *width, height, result_char_length);
 
 	char* result_char = malloc(result_char_length);
 
@@ -171,7 +177,7 @@ char *get_figlet_char(char *file_buffer, int index, int height, int *width) {
 			continue;
 		}
 		else {
-			result_char[result_char_index] = file_buffer[i];
+			result_char[result_char_index] = file_buffer[i] == hardblank ? ' ' : file_buffer[i];
 		}
 
 		result_char_index += 1;
@@ -179,6 +185,8 @@ char *get_figlet_char(char *file_buffer, int index, int height, int *width) {
 
 	result_char[result_char_length - 1] = '\0';
 	result_char[result_char_length - 2] = '\n';
+
+	printf("%s\n", result_char);
 
 	return result_char;
 }
@@ -228,7 +236,7 @@ Figlet_Char *get_font_from_file(char *char_list, char *font_file_path) {
 		int start_index = get_char_start_index(*current_char, file_buffer, height, comment_lines);
 
 		int width = 0;
-		char *data = get_figlet_char(file_buffer, start_index, height, &width);
+		char *data = get_figlet_char(file_buffer, start_index, height, &width, hardblank);
 
 		current_font_char->data = data;
 		current_font_char->character = *current_char;
@@ -236,7 +244,6 @@ Figlet_Char *get_font_from_file(char *char_list, char *font_file_path) {
 		current_font_char->width = width;
 
 		if (data == NULL) {
-			//printf("Font %s doesn't contain character for: %c\n", font_file_path, *current_char);
 			printf("\"%s\" ", font_file_path);
 			return NULL;
 		}
@@ -377,3 +384,4 @@ char *text_to_figlet(char *text, Figlet_Char *font) {
 	return result;
 }
 
+#endif
