@@ -16,8 +16,6 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	//printf("font_file_path: %s\n", font_file_path);
-
 	char *char_set = "0123456789:";
 	int char_set_length = strlen(char_set);
 
