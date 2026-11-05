@@ -164,29 +164,23 @@ char *get_figlet_char(char *file_buffer, int index, int height, int *width, char
 
 	int result_char_length = *width * height + 1; // +1 for \0
 
-	printf("w: %d, h: %d = %d\n", *width, height, result_char_length);
-
 	char* result_char = malloc(result_char_length);
+
+	if (result_char == NULL) return NULL;
 
 	int result_char_index = 0;
 
 	for (int i = index; result_char_index < result_char_length - 1; i++) {
 		if (file_buffer[i] == '\0') return NULL;
 
-		if (file_buffer[i + 1] == '\n' || file_buffer[i + 1] == '\r') {
-			continue;
-		}
-		else {
+		if (file_buffer[i + 1] != '\n' && file_buffer[i + 1] != '\r') {
 			result_char[result_char_index] = file_buffer[i] == hardblank ? ' ' : file_buffer[i];
+			result_char_index += 1;
 		}
-
-		result_char_index += 1;
 	}
 
 	result_char[result_char_length - 1] = '\0';
 	result_char[result_char_length - 2] = '\n';
-
-	printf("%s\n", result_char);
 
 	return result_char;
 }
