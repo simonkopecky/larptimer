@@ -29,7 +29,7 @@ bool hanle_args(int argc, char **argv) {
 		char *current_arg = argv[i];
 
 		if (strcmp(current_arg, "--list") == 0) {
-			print_fonts(font_dirs, sizeof(font_dirs));
+			print_fonts(font_dirs, sizeof(font_dirs) / sizeof(char*));
 			return false;
 		}
 		else if (strcmp(current_arg, "--help") == 0) {
