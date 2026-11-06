@@ -81,14 +81,20 @@ void print_fonts(char **font_dirs, size_t font_dir_count) {
 		while ((file = readdir(current_dir)) != NULL) {
 			char *file_name = file->d_name;
 			size_t file_name_length = strlen(file_name);
-			char *lower_case_file_name = tolower_string(file_name);
-			
+
 			if (file_name_length < 4 || strcmp(&file_name[file_name_length-4], ".flf") != 0) continue;
+
+			char *lower_case_file_name = tolower_string(file_name);
+
+			if (lower_case_file_name == NULL) continue;
 
 			lower_case_file_name[file_name_length-4] = '\0';
 
 			printf("%s\n", lower_case_file_name);
+			free(lower_case_file_name);
 		}
+
+		closedir(current_dir);
 	}
 }
 
@@ -103,10 +109,7 @@ char *find_font_file(char *font_name, char **font_dirs, size_t font_dir_count) {
 		DIR *current_dir = opendir(current_dir_name);
 		struct dirent *file;
 
-		if (current_dir == NULL) {
-			//printf("Couldn't open folder %s. Skipping...\n", current_dir_name);
-			continue;
-		}
+		if (current_dir == NULL) continue; 
 
 		while ((file = readdir(current_dir)) != NULL) {
 			char *file_name = file->d_name;
@@ -189,7 +192,7 @@ char *get_figlet_char(char *file_buffer, int index, int height, int *width, char
 
 char *file_to_string(char* path) {
 	FILE *file;
-	int file_size;
+	size_t file_size;
 
 	file = fopen(path, "r");
 	if (file == NULL) return NULL;
@@ -200,7 +203,13 @@ char *file_to_string(char* path) {
 
 	char *file_buffer = calloc(1, file_size + 1);
 
-	fread(file_buffer, sizeof(char), file_size, file);
+	size_t ret = fread(file_buffer, sizeof(char), file_size, file);
+
+	if (ret != file_size) {
+		free(file_buffer);
+		return NULL;
+	};
+
 	file_buffer[file_size] = '\0';
 	fclose(file);
 
