@@ -10,3 +10,9 @@ test-fonts: build
 		font=$$(basename "$$file" .flf); \
 		./larptimer -f "$$font" || (echo "$$font"; exit 1); \
 	done
+
+test-list: build
+	./larptimer --list
+
+test-help: build
+	./larptimer --help
