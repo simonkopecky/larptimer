@@ -74,7 +74,7 @@ int string_to_time(char *text) {
 }
 
 char *time_to_string(int time) {
-	int divs[] = {60, 60, 24, 1};
+	int divs[] = {60, 60, 24};
 	int min_widths[] = {2, 2, 2, 1};
 
 	int vals[4];
@@ -83,14 +83,17 @@ char *time_to_string(int time) {
 	int result_size = 0;
 
 	for (int i = 0; i < 4; i++) {
-		vals[i] = time % divs[i];
+		if (i != 3) {
+			vals[i] = time % divs[i];
+			time /= divs[i];
+		}
+		else vals[i] = time;
+
 		int num_len = snprintf(NULL, 0, "%d", vals[i]);
 		if (num_len < 0) return NULL;
 
 		vals_len++;
 		text_val_lens[i] = num_len;
-
-		time /= divs[i];
 
 		result_size += time == 0 ? num_len + 1 : min_widths[i] + 1;
 
