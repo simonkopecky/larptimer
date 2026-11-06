@@ -1,5 +1,5 @@
 build:
-	gcc -Wall -pedantic -Wextra main.c -o larptimer
+	gcc -Wall -pedantic main.c -o larptimer
 
 test: build
 	./larptimer
