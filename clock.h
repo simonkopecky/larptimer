@@ -87,10 +87,13 @@ char *time_to_string(int time) {
 			vals[i] = time % divs[i];
 			time /= divs[i];
 		}
-		else vals[i] = time;
+		else {
+			vals[i] = time;
+			time = 0;
+		}
 
 		int num_len = snprintf(NULL, 0, "%d", vals[i]);
-		if (num_len < 0) return NULL;
+		if (num_len <= 0) return NULL;
 
 		vals_len++;
 		text_val_lens[i] = num_len;
@@ -114,6 +117,10 @@ char *time_to_string(int time) {
 			}
 		}
 
+		if (i == 0) {
+			sprintf(result + result_index, "%d", vals[i]);
+			break;
+		}
 		int num_len = sprintf(result + result_index, "%d:", vals[i]);
 		result_index += num_len;
 	}
@@ -151,17 +158,30 @@ bool print_for_duration(char *text, long long duration_ms) {
 	return true;
 }
 
-void lt_timer(int duration, Figlet_Char *font) {
+bool lt_timer(int duration, Figlet_Char *font) {
 	display_init();
 
-	while (duration > 0) {
-		char *result = text_to_figlet(time_to_string(duration), font);
+	bool interupt = false;
 
-		if (!print_for_duration(result, 1000)) break;
+	while (duration > 0) {
+		char *time_string = time_to_string(duration);
+
+		if (time_string == NULL) return false;
+
+		char *result = text_to_figlet(time_string, font);
+
+		if (result == NULL) return false;
+
+		if (!print_for_duration(result, 1000)) {
+			interupt = true;
+			break;
+		}
 		duration--;
 	}
 
 	tb_shutdown();
+
+	return interupt;
 }
 
 void lt_clock(Figlet_Char *font) {
@@ -174,7 +194,7 @@ void lt_clock(Figlet_Char *font) {
 		struct tm *current_localtime = localtime(&current_time);
 
 		int buff_length = 8;
-		char *buff = malloc(buff_length);
+		char *buff = malloc(buff_length + 1);
 
 		strftime(buff, buff_length + 1, "%H:%M:%S", current_localtime);
 

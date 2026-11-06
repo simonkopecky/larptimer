@@ -7,7 +7,7 @@
 #include "args.h"
 
 int main(int argc, char **argv) {
-	if (!hanle_args(argc, argv)) return 1;
+	if (!hanle_args(argc, argv)) return 0;
 
 	size_t font_dir_count = sizeof(font_dirs) / sizeof(font_dirs[0]);
 	char *font_file_path = find_font_file(font_name, font_dirs, font_dir_count);
@@ -20,6 +20,9 @@ int main(int argc, char **argv) {
 	int char_set_length = strlen(char_set);
 
 	Figlet_Char *font = get_font_from_file(char_set, font_file_path);
+
+	if (font == NULL) return 1;
+
 	monospace(font, char_set_length);
 
 	if (use_as_clock) {
@@ -28,7 +31,7 @@ int main(int argc, char **argv) {
 	else {
 		int duration = string_to_time(start_duration_text);
 
-		lt_timer(duration, font);
+		return lt_timer(duration, font) ? 1 : 0;
 	}
 
 	return 0;
